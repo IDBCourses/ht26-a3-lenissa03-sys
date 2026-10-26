@@ -23,10 +23,20 @@
 
 import { createShape } from "./shape.js";
 
+let shape; // song
+let shape2; // effect
+let triangle
+
 // ---------- Settings ----------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
-const note = "C4"; // the note played when the pointer goes down
+const note = "C4";// the note played when the pointer goes down
+const note2 = [  "C5", "E5", "G5", "B5", "G5", "E5", "A5", "G5",
+  "E5", "C5", "D5", "F5", "A5", "F5", "D5", "G5",
+  "B5", "D6", "B5", "G5", "A5", "G5", "E5", "D5",
+  "C5", "E5", "G5", "E5", "A5", "G5", "E5", "C5",
+  "D5", "F5", "A5", "F5", "D5", "C5", "G4", "C5"];
+
 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
@@ -50,25 +60,81 @@ function use() {
 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time the pointer goes down: a click, a tap or a pen touch.
+//function startSound(event) {
+//  Tone.start(); // sound is allowed after a click
+//}
 function pointerDown(event) {
-  Tone.start(); // browsers only allow sound after the player has pressed something
+  Tone.start();
 
   console.log("Pointer down at", event.clientX, event.clientY);
-  synth.triggerAttackRelease(note, "8n"); // play the note for an eighth note
+
+  const startTime = Tone.now();
+
+  for (let i = 0; i < note2.length; i++) {
+    synth.triggerAttackRelease(
+      note2[i],
+      "8n",
+      startTime + i * 0.3
+    );
+  }
+
+  shape2.setColour(50, 100, 60);
 }
+
+
+function pointerEnter(event) {
+  Tone.start();
+  synth.triggerAttack("C4"); // starts effect
+  shape.setColour(50, 100, 60);
+}
+
+function pointerLeave(event) {
+  synth.triggerRelease("C4"); // stops effect
+  shape.setColour(200, 80, 50);
+}
+
+
 
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
+
+
+
 function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-  // Example: a shape near the middle of the window. Replace it with your own.
-  const example = createShape("example");
-  example.setPosition(0.5, 0.5);
 
-  // Put your event listener code here
-  window.addEventListener("pointerdown", pointerDown);
+// effect
+  shape = createShape("effect");
+  shape.setPosition(0.6, 0.4);
+  shape.setColour(50, 100, 60);
+
+//song
+  shape2 = createShape("song");
+  shape2.setPosition(0.0, 0.4);
+  shape2.setColour(150, 100, 20);
+
+// triangle
+  triangle = createShape("triangle");
+  triangle.setPosition(0.0, 0.0);
+  triangle.setSize();
+  triangle.setColour(200, 100, 60);
+
+  shape.element.addEventListener("pointerenter", pointerEnter);
+  shape.element.addEventListener("pointerleave", pointerLeave);
+
+  // Also add pointerdown for whole window
+
+
+  // i only want sound coming from an interaction with an shape
+  //window.addEventListener("pointerdown", pointerDown);
+  //window.addEventListener("pointerup", pointerUp);
+
+  shape2.element.addEventListener("pointerdown", pointerDown);
+  shape2.element.addEventListener("pointerup", pointerUp);
 }
+
+
 
 setup(); // Always remember to call setup()!

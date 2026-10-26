@@ -31,7 +31,7 @@ export class Shape {
     this.lightness = 50;
     this.opacity = 1;
     this.width = 100;
-    this.height = 100;
+    this.height = 50;
     this.roundedness = 0;
     this.rotation = 0;
   }
