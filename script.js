@@ -23,76 +23,155 @@
 
 import { createShape } from "./shape.js";
 
-let shape; // song
-let shape2; // effect
-let triangle
+
 
 // ---------- Settings ----------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
-const note = "C4";// the note played when the pointer goes down
-const note2 = [  "C5", "E5", "G5", "B5", "G5", "E5", "A5", "G5",
-  "E5", "C5", "D5", "F5", "A5", "F5", "D5", "G5",
-  "B5", "D6", "B5", "G5", "A5", "G5", "E5", "D5",
-  "C5", "E5", "G5", "E5", "A5", "G5", "E5", "C5",
-  "D5", "F5", "A5", "F5", "D5", "C5", "G4", "C5"];
+
+const note = "reverb";
+const note2 = [  "E4", "E4", "E4",
+  "E4", "E4", "E4",
+  "E4", "G4", "C4", "D4", "E4",
+  "F4", "F4", "F4", "F4",
+  "F4", "E4", "E4", "E4",
+  "E4", "D4", "D4", "E4", "D4", "G4"];
 
 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 
+let shape; // song
+let shape2; // effect
+let triangle // bottom tree
+let triangle2 // middle tree
+let triangle3 // top tree
+let star;
+let songPlaying = false;
+let scheduledNotes = [];  // stores
+
+let previousX = 0;
+let previousY = 0;
+let previousTime = 0;
+let starRotation = 0;
+
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
-const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
+
+const reverb = new Tone.Reverb({
+  decay: 2,
+  wet: 0.3
+}).toDestination();
+
+const synth = new Tone.PolySynth(Tone.Synth).connect(reverb);
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
+
 function update() {
   setTimeout(update, 100); // call update() again in 100 milliseconds
 }
 
 // ---------- Use ----------
 // Use the state to make sound and move shapes. This is called every 100ms.
+
 function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
 // ---------- Controls (Event Handlers) ----------
 // Runs every time the pointer goes down: a click, a tap or a pen touch.
-//function startSound(event) {
-//  Tone.start(); // sound is allowed after a click
-//}
+
+
 function pointerDown(event) {
   Tone.start();
 
-  console.log("Pointer down at", event.clientX, event.clientY);
+  if (songPlaying === false) {
+    playSong();
+  } else {
+    stopSong();
+  }
+}
 
-  const startTime = Tone.now();
+function playSong() {
+  songPlaying = true;
+  scheduledNotes = [];
+
+  shape2.setColour(0, 0, 100);
 
   for (let i = 0; i < note2.length; i++) {
-    synth.triggerAttackRelease(
-      note2[i],
-      "8n",
-      startTime + i * 0.3
-    );
+    const timer = setTimeout(function() {
+      synth.triggerAttackRelease(note2[i], "8n");
+
+      if (i === note2.length - 1) {
+        songPlaying = false;
+        scheduledNotes = [];
+        resetColours();
+      }
+    }, i * 500);
+
+    scheduledNotes.push(timer);
+  }
+}
+
+function stopSong() {
+  for (let i = 0; i < scheduledNotes.length; i++) {
+    clearTimeout(scheduledNotes[i]);
   }
 
-  shape2.setColour(50, 100, 60);
+  scheduledNotes = [];
+  songPlaying = false;
+  synth.releaseAll();
+
+  resetColours();
+}
+
+function resetColours() {
+  shape2.setColour(45, 100, 50);
+  reverb.wet.value = 0.3;
+  shape.setColour(0, 100, 38);
 }
 
 
-function pointerEnter(event) {
-  Tone.start();
-  synth.triggerAttack("C4"); // starts effect
-  shape.setColour(50, 100, 60);
+
+function pointerEnter(event) {     // starts the effect
+  if (songPlaying === true) {
+    reverb.wet.value = 0.8;
+    shape.setColour(170, 200, 26); // green while effect is active
+  }
 }
 
-function pointerLeave(event) {
-  synth.triggerRelease("C4"); // stops effect
-  shape.setColour(200, 80, 50);
+function pointerLeave(event) {  // stops the effect
+  reverb.wet.value = 0.3;
+  shape.setColour(0, 100, 38); // red again
 }
 
+
+function pointerMove(event) {
+  const currentX = event.clientX;
+  const currentY = event.clientY;
+  const currentTime = event.timeStamp;
+
+  if (previousTime !== null) {
+    const distanceX = currentX - previousX;
+    const distanceY = currentY - previousY;
+
+    const distance = Math.sqrt(
+      distanceX * distanceX + distanceY * distanceY
+    );
+
+    const timeDifference = currentTime - previousTime;
+    const speed = distance / timeDifference;
+
+    starRotation = starRotation + speed * timeDifference * 0.5;
+    star.setRotation(starRotation);
+  }
+
+  previousX = currentX;
+  previousY = currentY;
+  previousTime = currentTime;
+}
 
 
 // ---------- Setup ----------
@@ -104,22 +183,43 @@ function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
-
-// effect
-  shape = createShape("effect");
-  shape.setPosition(0.6, 0.4);
-  shape.setColour(50, 100, 60);
-
-//song
-  shape2 = createShape("song");
-  shape2.setPosition(0.0, 0.4);
-  shape2.setColour(150, 100, 20);
-
-// triangle
+// triangle bottom
   triangle = createShape("triangle");
-  triangle.setPosition(0.0, 0.0);
-  triangle.setSize();
-  triangle.setColour(200, 100, 60);
+  triangle.setPosition(0.35, 0.4);
+  triangle.setSize(350);
+  triangle.setColour(140, 80, 26);  // green
+
+// triangle middle
+  triangle2 = createShape("triangle");
+  triangle2.setPosition(0.385, 0.3);
+  triangle2.setSize(250);
+  triangle2.setColour(140, 80, 26);  // green
+
+// triangle top
+  triangle3 = createShape("triangle");
+  triangle3.setPosition(0.4, 0.2);
+  triangle3.setSize(200);
+  triangle3.setColour(140, 80, 26);  // green
+
+// song: gold originally
+  shape2 = createShape("shape2");
+  shape2.setPosition(0.35, 0.48);
+  shape2.setColour(45, 100, 50);  // gold
+  shape2.setSize(100)
+
+// effect: red originally
+  shape = createShape("shape");
+  shape.setPosition(0.5, 0.65);
+  shape.setColour(0, 100, 38);  // red
+  shape.setSize(100)
+
+//star on top
+  star = createShape("star");
+  star.setPosition(0.427, 0.11);
+  star.setSize(120);
+  star.setColour(45, 100, 50);
+  star.setRotation(0);
+
 
   shape.element.addEventListener("pointerenter", pointerEnter);
   shape.element.addEventListener("pointerleave", pointerLeave);
@@ -132,7 +232,8 @@ function setup() {
   //window.addEventListener("pointerup", pointerUp);
 
   shape2.element.addEventListener("pointerdown", pointerDown);
-  shape2.element.addEventListener("pointerup", pointerUp);
+
+  window.addEventListener("pointermove", pointerMove);
 }
 
 

@@ -3,7 +3,7 @@
 .shape {
   width: 200px;
   height: 200px;
-  background-color: #7eab54;
+  background-color:#7eab54;
   /* Positioned from the top-left of the window; setPosition() moves it from there. */
   position: absolute;
   top: 0;
@@ -23,8 +23,7 @@ body {
   padding: 0;
   line-height: 1.5;
   font-family: system-ui, sans-serif;
-  background-color: pink;
-  background-color: aqua;
+  background-color: rgb(162, 218, 240);
 }
 
 kbd {
@@ -34,7 +33,26 @@ kbd {
   font-family: inherit;
 }
 
-#triangle {
+
+
+[id^="triangle"] {
   border-radius: 0;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Star shape */
+[id^="star"] {
+  border-radius: 0;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
 }
