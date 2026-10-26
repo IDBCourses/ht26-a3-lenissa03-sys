@@ -185,7 +185,7 @@ function setup() {
 
 // triangle bottom
   triangle = createShape("triangle");
-  triangle.setPosition(0.35, 0.4);
+  triangle.setPosition(0.345, 0.37);
   triangle.setSize(350);
   triangle.setColour(140, 80, 26);  // green
 
@@ -197,25 +197,25 @@ function setup() {
 
 // triangle top
   triangle3 = createShape("triangle");
-  triangle3.setPosition(0.4, 0.2);
+  triangle3.setPosition(0.405, 0.2);
   triangle3.setSize(200);
   triangle3.setColour(140, 80, 26);  // green
 
 // song: gold originally
   shape2 = createShape("shape2");
-  shape2.setPosition(0.35, 0.48);
+  shape2.setPosition(0.35, 0.495);
   shape2.setColour(45, 100, 50);  // gold
   shape2.setSize(100)
 
 // effect: red originally
   shape = createShape("shape");
-  shape.setPosition(0.5, 0.65);
+  shape.setPosition(0.55, 0.67);
   shape.setColour(0, 100, 38);  // red
   shape.setSize(100)
 
 //star on top
   star = createShape("star");
-  star.setPosition(0.427, 0.11);
+  star.setPosition(0.436, 0.12);
   star.setSize(120);
   star.setColour(45, 100, 50);
   star.setRotation(0);
