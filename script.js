@@ -64,7 +64,7 @@ const reverb = new Tone.Reverb({
   wet: 0.3
 }).toDestination();
 
-const synth = new Tone.PolySynth(Tone.Synth).connect(reverb);
+const synth = new Tone.Synth().connect(reverb);
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -122,7 +122,7 @@ function stopSong() {
 
   scheduledNotes = [];
   songPlaying = false;
-  synth.releaseAll();
+  synth.triggerRelease();
 
   resetColours();
 }
@@ -163,6 +163,8 @@ function pointerMove(event) {
 
     const timeDifference = currentTime - previousTime;
     const speed = distance / timeDifference;
+
+    synth.detune.value = speed * 200;
 
     starRotation = starRotation + speed * timeDifference * 0.5;
     star.setRotation(starRotation);
