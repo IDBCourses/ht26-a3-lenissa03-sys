@@ -29,7 +29,7 @@ import { createShape } from "./shape.js";
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
 
-const note = "reverb";
+// MELODY
 const note2 = [  "E4", "E4", "E4",
   "E4", "E4", "E4",
   "E4", "G4", "C4", "D4", "E4",
@@ -42,18 +42,16 @@ const note2 = [  "E4", "E4", "E4",
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 
+//VARIABLES
 let shape; // song
 let shape2; // effect
-let triangle // bottom tree
-let triangle2 // middle tree
-let triangle3 // top tree
 let star;
 let songPlaying = false;
-let scheduledNotes = [];  // stores
+let scheduledNotes = [];  // stores timers ID+-*
 
 let previousX = 0;
 let previousY = 0;
-let previousTime = 0;
+let previousTime = null;
 let starRotation = 0;
 
 // ---------- Sound ----------
@@ -84,7 +82,7 @@ function use() {
 // Runs every time the pointer goes down: a click, a tap or a pen touch.
 
 
-function pointerDown(event) {
+function pointerDown() {
   Tone.start();
 
   if (songPlaying === false) {
@@ -135,14 +133,14 @@ function resetColours() {
 
 
 
-function pointerEnter(event) {     // starts the effect
+function pointerEnter() {     // starts the effect
   if (songPlaying === true) {
     reverb.wet.value = 0.8;
     shape.setColour(170, 200, 26); // green while effect is active
   }
 }
 
-function pointerLeave(event) {  // stops the effect
+function pointerLeave() {  // stops the effect
   reverb.wet.value = 0.3;
   shape.setColour(0, 100, 38); // red again
 }
@@ -186,32 +184,32 @@ function setup() {
   use(); // start the use loop
 
 // triangle bottom
-  triangle = createShape("triangle");
+  const triangle = createShape("triangle");
   triangle.setPosition(0.345, 0.37);
   triangle.setSize(350);
   triangle.setColour(140, 80, 26);  // green
 
 // triangle middle
-  triangle2 = createShape("triangle");
+  const triangle2 = createShape("triangle");
   triangle2.setPosition(0.385, 0.3);
   triangle2.setSize(250);
   triangle2.setColour(140, 80, 26);  // green
 
 // triangle top
-  triangle3 = createShape("triangle");
+  const triangle3 = createShape("triangle");
   triangle3.setPosition(0.405, 0.2);
   triangle3.setSize(200);
   triangle3.setColour(140, 80, 26);  // green
 
 // song: gold originally
   shape2 = createShape("shape2");
-  shape2.setPosition(0.35, 0.495);
+  shape2.setPosition(0.359, 0.485);
   shape2.setColour(45, 100, 50);  // gold
   shape2.setSize(100)
 
 // effect: red originally
   shape = createShape("shape");
-  shape.setPosition(0.55, 0.67);
+  shape.setPosition(0.57, 0.66);
   shape.setColour(0, 100, 38);  // red
   shape.setSize(100)
 
