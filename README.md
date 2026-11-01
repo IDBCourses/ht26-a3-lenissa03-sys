@@ -4,7 +4,7 @@
 
 LENISSA BOUBOU 129363275
 
-Jingle Bells is a pointer-controlled musical instrument inspired by upcoming season. The player can start and stop the melody, change its pitch by moving the pointer, and activate a reverb effect by entering a separate ornament. The shapes also respond visually to the interactions.
+Jingle Bells is a pointer-controlled musical instrument inspired by the upcoming festive season. The player can start and stop the melody, change its pitch by moving the pointer, and activate a reverb effect by entering a separate ornament. The shapes also respond visually to the interactions.
 
 ## Try it out ;)
 
@@ -24,7 +24,7 @@ Jingle Bells is a pointer-controlled musical instrument inspired by upcoming sea
 |                         |                                               | original red;           |
 -----------------------------------------------------------------------------------------------------
 |                         |                                               |                         |
-| move pointer, fast or   | changes in pith, depending on speed,          | and the stars rotates,  |
+| move pointer, fast or   | changes in pitch, depending on speed,          | and the stars rotates,  |
 | slowly,                 |                                               | also depending on speed;|
 |-------------------------|-----------------------------------------------|-------------------------|
 |                         |                                               |                         |
