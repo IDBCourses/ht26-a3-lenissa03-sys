@@ -1,21 +1,36 @@
-# My instrument
+# JINGLE BELLS
 
-**Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
+**Play it here:** (https://github.com/IDBCourses/ht26-a3-lenissa03-sys.git)
 
-**Name:** <!-- Your name and MAU ID -->
+LENISSA BOUBOU 129363275
 
-<!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
+Jingle Bells is a pointer-controlled musical instrument inspired by upcoming season. The player can start and stop the melody, change its pitch by moving the pointer, and activate a reverb effect by entering a separate ornament. The shapes also respond visually to the interactions.
 
-## How to play
+## Try it out ;)
 
-<!-- Fill in the table with a row for everything the player can do with the pointer: clicking, moving slowly or fast, moving in circles, holding still... Say what happens to the sound and to the shapes. If you added keys, give them rows too. -->
 
-| When you...  | The sound...                         | The shapes... |
-| ------------ | ------------------------------------ | ------------- |
-| Click or tap | Plays a C4 (the example: replace it) | Nothing yet   |
-|              |                                      |               |
+| When you...             | The sound...                                  | The shapes...           |
+| ------------------------|-----------------------------------------------|-------------------------|
+|                         |                                               |                         |
+| click on gold ornament, | the sound will start playing the Jingle       | gold cirkle, turns blue |
+|                         | Bells melody, click again to stop it,         | when song is playing;   |
+-----------------------------------------------------------------------------------------------------
+|                         |                                               |                         |
+| enter red cirkle,       | the sound will add reverb, spacious effect,   | red cirkle, turns green |
+|                         |                                               | when pointer inside;    |
+-----------------------------------------------------------------------------------------------------
+|                         |                                               |                         |
+| leave green cirkle,     | the sound will stop effect,                   | and return to it's      |
+|                         |                                               | original red;           |
+-----------------------------------------------------------------------------------------------------
+|                         |                                               |                         |
+| move pointer, fast or   | changes in pith, depending on speed,          | and the stars rotates,  |
+| slowly,                 |                                               | also depending on speed;|
+|-------------------------|-----------------------------------------------|-------------------------|
+|                         |                                               |                         |
 
-<!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
+TIPS!
+Start by only listening to melody! After establishing a good ground, please start exploring other interactions.
 
 ---
 

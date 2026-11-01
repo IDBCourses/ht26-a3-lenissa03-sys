@@ -43,11 +43,11 @@ const note2 = [  "E4", "E4", "E4",
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 
 //VARIABLES
-let shape; // song
-let shape2; // effect
+let shape; // effect
+let shape2; // song
 let star;
 let songPlaying = false;
-let scheduledNotes = [];  // stores timers ID+-*
+let scheduledNotes = [];  // emty array that will hold timers ID
 
 let previousX = 0;
 let previousY = 0;
@@ -59,10 +59,12 @@ let starRotation = 0;
 
 const reverb = new Tone.Reverb({
   decay: 2,
-  wet: 0.3
+  wet: 0
 }).toDestination();
 
 const synth = new Tone.Synth().connect(reverb);
+
+synth.volume.value = 20;
 
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
@@ -83,7 +85,7 @@ function use() {
 
 
 function pointerDown() {
-  Tone.start();
+ Tone.start();
 
   if (songPlaying === false) {
     playSong();
@@ -92,9 +94,13 @@ function pointerDown() {
   }
 }
 
+
 function playSong() {
   songPlaying = true;
   scheduledNotes = [];
+
+  synth.volume.value = 20;
+  reverb.wet.value = 0;
 
   shape2.setColour(0, 0, 100);
 
@@ -111,7 +117,9 @@ function playSong() {
 
     scheduledNotes.push(timer);
   }
+
 }
+
 
 function stopSong() {
   for (let i = 0; i < scheduledNotes.length; i++) {
@@ -125,24 +133,25 @@ function stopSong() {
   resetColours();
 }
 
+
 function resetColours() {
   shape2.setColour(45, 100, 50);
-  reverb.wet.value = 0.3;
   shape.setColour(0, 100, 38);
 }
 
 
-
 function pointerEnter() {     // starts the effect
   if (songPlaying === true) {
-    reverb.wet.value = 0.8;
+    reverb.wet.value = 1;
     shape.setColour(170, 200, 26); // green while effect is active
   }
 }
 
+
 function pointerLeave() {  // stops the effect
-  reverb.wet.value = 0.3;
+  reverb.wet.value = 0.0;
   shape.setColour(0, 100, 38); // red again
+  //synth.volume.value = 30; // gets song back to same volume
 }
 
 
@@ -152,20 +161,29 @@ function pointerMove(event) {
   const currentTime = event.timeStamp;
 
   if (previousTime !== null) {
+
     const distanceX = currentX - previousX;
     const distanceY = currentY - previousY;
 
     const distance = Math.sqrt(
-      distanceX * distanceX + distanceY * distanceY
+      distanceX * distanceX + distanceY * distanceY   // calculates distance between 2 positions
     );
 
-    const timeDifference = currentTime - previousTime;
-    const speed = distance / timeDifference;
+    const timeDifference = currentTime - previousTime;  // calculates time difference
 
-    synth.detune.value = speed * 200;
+    if (timeDifference > 0) {
 
-    starRotation = starRotation + speed * timeDifference * 0.5;
-    star.setRotation(starRotation);
+      const speed = distance / timeDifference;
+
+      if (Number.isFinite(speed)) {
+
+        synth.detune.value = speed * 200;
+
+        starRotation = starRotation + distance * 0.5;
+
+        star.setRotation(starRotation);
+      }
+    }
   }
 
   previousX = currentX;
@@ -174,10 +192,15 @@ function pointerMove(event) {
 }
 
 
+function resetPointerTracking() {  // to make the pointer still work outside screen. By forgetting previous pointer.
+  previousTime = null;
+  previousX = 0;
+  previousY = 0;
+}
+
+
 // ---------- Setup ----------
 // Setup is run once, at the start of the program. It sets everything up for us!
-
-
 
 function setup() {
   update(); // start the update loop
@@ -185,37 +208,43 @@ function setup() {
 
 // triangle bottom
   const triangle = createShape("triangle");
-  triangle.setPosition(0.345, 0.37);
+  //triangle.setPosition(0.345, 0.37);
+  triangle.setPositionPixels(515.84, 250.12);
   triangle.setSize(350);
   triangle.setColour(140, 80, 26);  // green
 
 // triangle middle
   const triangle2 = createShape("triangle");
-  triangle2.setPosition(0.385, 0.3);
+  //triangle2.setPosition(0.385, 0.3);
+  triangle2.setPositionPixels(566.72, 202.80);
   triangle2.setSize(250);
   triangle2.setColour(140, 80, 26);  // green
 
 // triangle top
   const triangle3 = createShape("triangle");
-  triangle3.setPosition(0.405, 0.2);
+  //triangle3.setPosition(0.405, 0.2);
+  triangle3.setPositionPixels(596.16, 135.20);
   triangle3.setSize(200);
   triangle3.setColour(140, 80, 26);  // green
 
 // song: gold originally
   shape2 = createShape("shape2");
-  shape2.setPosition(0.359, 0.485);
+  //shape2.setPosition(0.359, 0.485);
+  shape2.setPositionPixels(528.45, 327.86);
   shape2.setColour(45, 100, 50);  // gold
   shape2.setSize(100)
 
 // effect: red originally
   shape = createShape("shape");
-  shape.setPosition(0.57, 0.66);
+  //shape.setPosition(0.57, 0.66);
+  shape.setPositionPixels(790.04, 440.16);
   shape.setColour(0, 100, 38);  // red
   shape.setSize(100)
 
 //star on top
   star = createShape("star");
-  star.setPosition(0.436, 0.12);
+  //star.setPosition(0.436, 0.12);
+  star.setPositionPixels(641.79, 81.12);
   star.setSize(120);
   star.setColour(45, 100, 50);
   star.setRotation(0);
@@ -234,6 +263,14 @@ function setup() {
   shape2.element.addEventListener("pointerdown", pointerDown);
 
   window.addEventListener("pointermove", pointerMove);
+
+  document.addEventListener("pointerout", function(event) { // setup for resetPointerTracking
+  if (event.relatedTarget === null) {
+    resetPointerTracking();
+  }
+  });
+
+  window.addEventListener("blur", resetPointerTracking);
 }
 
 
