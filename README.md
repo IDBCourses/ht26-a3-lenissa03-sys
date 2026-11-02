@@ -24,7 +24,7 @@ Jingle Bells is a pointer-controlled musical instrument inspired by the upcoming
 |                         |                                               | original red;           |
 -----------------------------------------------------------------------------------------------------
 |                         |                                               |                         |
-| move pointer, fast or   | changes in pitch, depending on speed,          | and the stars rotates,  |
+| move pointer, fast or   | changes in pitch, depending on speed,          | and the stars rotates, |
 | slowly,                 |                                               | also depending on speed;|
 |-------------------------|-----------------------------------------------|-------------------------|
 |                         |                                               |                         |
