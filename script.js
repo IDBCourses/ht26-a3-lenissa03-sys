@@ -25,12 +25,12 @@ import { createShape } from "./shape.js";
 
 
 
-// ---------- Settings ----------
+// ---------- SETTINGS ------------------------------------------------------------------------------------------------------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
 
-// MELODY
-const note2 = [  "E4", "E4", "E4",
+// melody
+const melody = [  "E4", "E4", "E4",
   "E4", "E4", "E4",
   "E4", "G4", "C4", "D4", "E4",
   "F4", "F4", "F4", "F4",
@@ -38,52 +38,64 @@ const note2 = [  "E4", "E4", "E4",
   "E4", "D4", "D4", "E4", "D4", "G4"];
 
 
-// ---------- State ----------
+
+// ---------- STATE -----------------------------------------------------------------------------------------------------------
 // State variables are the parts of your program that change over time.
 // For example: where the pointer is, how fast it's moving, or whether a drone is on.
 
 //VARIABLES
-let shape; // effect
-let shape2; // song
+//Shapes
+let redOrn; // effect
+let goldOrn; // song
 let star;
-let songPlaying = false;
-let scheduledNotes = [];  // emty array that will hold timers ID
 
+//song state
+let songPlaying = false;
+let scheduledNotes = [];  // Stores the IDs of scheduled note timers.
+            
+//pointer state
 let previousX = 0;
 let previousY = 0;
 let previousTime = null;
+
+//star state
 let starRotation = 0;
 
-// ---------- Sound ----------
+// ---------- SOUND -------------------------------------------------------------------------------------------------------------
 // Make the instruments and plug them into the speakers.
 
+// reverb effect. starts at 0
 const reverb = new Tone.Reverb({
-  decay: 2,
-  wet: 0
+  decay: 2,  // fading of reverb
+  wet: 0     // how much reverb
 }).toDestination();
 
+//new synthesiser, creates instrument, connect instrument to reverb instead of note, in variable synth
 const synth = new Tone.Synth().connect(reverb);
 
 synth.volume.value = 20;
 
-// ---------- Update ----------
-// Update the state. This is called every 100ms.
+
+// ---------- UPDATE ------------------------------------------------------------------------------------------------------------
+// Repeats every 100ms. Reserved for updating the instrument's state.
 
 function update() {
   setTimeout(update, 100); // call update() again in 100 milliseconds
 }
 
-// ---------- Use ----------
-// Use the state to make sound and move shapes. This is called every 100ms.
+
+// ---------- USE ----------------------------------------------------------------------------------------------------------------
+// Repeats every 100ms. Reserved for using the state to control sound and visuals.
 
 function use() {
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
-// ---------- Controls (Event Handlers) ----------
+
+// ---------- CONTROLS (Event Handlers) -------------------------------------------------------------------------------------------
 // Runs every time the pointer goes down: a click, a tap or a pen touch.
 
-
+// Starts or stops the melody when the song shape is clicked.
 function pointerDown() {
  Tone.start();
 
@@ -94,7 +106,7 @@ function pointerDown() {
   }
 }
 
-
+// Plays the melody by scheduling each note with a delay.
 function playSong() {
   songPlaying = true;
   scheduledNotes = [];
@@ -102,25 +114,28 @@ function playSong() {
   synth.volume.value = 20;
   reverb.wet.value = 0;
 
-  shape2.setColour(0, 0, 100);
+  goldOrn.setColour(0, 0, 100);
 
-  for (let i = 0; i < note2.length; i++) {
+  // Schedule each note with a 500ms delay between notes.
+  for (let i = 0; i < melody.length; i++) {
     const timer = setTimeout(function() {
-      synth.triggerAttackRelease(note2[i], "8n");
+      // Play the current note in the melody.
+      synth.triggerAttackRelease(melody[i], "8n");
 
-      if (i === note2.length - 1) {
+      // Reset the song state after the final note.
+      if (i === melody.length - 1) {
         songPlaying = false;
         scheduledNotes = [];
         resetColours();
       }
     }, i * 500);
 
-    scheduledNotes.push(timer);
+    scheduledNotes.push(timer);   // Store the timer ID so playback can be cancelled.
   }
 
 }
 
-
+// Cancels scheduled notes and stops the current melody.
 function stopSong() {
   for (let i = 0; i < scheduledNotes.length; i++) {
     clearTimeout(scheduledNotes[i]);
@@ -133,28 +148,28 @@ function stopSong() {
   resetColours();
 }
 
-
+// Restores the original colours of the interactive shapes.
 function resetColours() {
-  shape2.setColour(45, 100, 50);
-  shape.setColour(0, 100, 38);
+  goldOrn.setColour(45, 100, 50);
+  redOrn.setColour(0, 100, 38);
 }
 
-
-function pointerEnter() {     // starts the effect
+// Activates the reverb effect when the pointer enters the effect shape.
+function pointerEnter() {
   if (songPlaying === true) {
     reverb.wet.value = 1;
-    shape.setColour(170, 200, 26); // green while effect is active
+    redOrn.setColour(170, 200, 26); // green while effect is active
   }
 }
 
-
-function pointerLeave() {  // stops the effect
+// Turns off the reverb effect when the pointer leaves the effect shape.
+function pointerLeave() {
   reverb.wet.value = 0.0;
-  shape.setColour(0, 100, 38); // red again
+  redOrn.setColour(0, 100, 38); // red again
   //synth.volume.value = 30; // gets song back to same volume
 }
 
-
+// Calculates pointer speed and movement distance.
 function pointerMove(event) {
   const currentX = event.clientX;
   const currentY = event.clientY;
@@ -191,57 +206,58 @@ function pointerMove(event) {
   previousTime = currentTime;
 }
 
-
+// Resets pointer history when the pointer leaves the window or the window loses focus.
 function resetPointerTracking() {  // to make the pointer still work outside screen. By forgetting previous pointer.
   previousTime = null;
   previousX = 0;
   previousY = 0;
 }
 
-
-// ---------- Setup ----------
+// ---------- SETUP ------------------------------------------------------------------------------------------------------------------
 // Setup is run once, at the start of the program. It sets everything up for us!
 
 function setup() {
   update(); // start the update loop
   use(); // start the use loop
 
+//-------------Decorative Shapes----------------
 // triangle bottom
-  const triangle = createShape("triangle");
-  //triangle.setPosition(0.345, 0.37);
-  triangle.setPositionPixels(515.84, 250.12);
-  triangle.setSize(350);
-  triangle.setColour(140, 80, 26);  // green
+  const triangleBo = createShape("triangle");
+  //triangleBo.setPosition(0.345, 0.37);
+  triangleBo.setPositionPixels(515.84, 250.12);
+  triangleBo.setSize(350);
+  triangleBo.setColour(140, 80, 26);  // green
 
 // triangle middle
-  const triangle2 = createShape("triangle");
-  //triangle2.setPosition(0.385, 0.3);
-  triangle2.setPositionPixels(566.72, 202.80);
-  triangle2.setSize(250);
-  triangle2.setColour(140, 80, 26);  // green
+  const triangleMi = createShape("triangle");
+  //triangleMi.setPosition(0.385, 0.3);
+  triangleMi.setPositionPixels(566.72, 202.80);
+  triangleMi.setSize(250);
+  triangleMi.setColour(140, 80, 26);  // green
 
 // triangle top
-  const triangle3 = createShape("triangle");
-  //triangle3.setPosition(0.405, 0.2);
-  triangle3.setPositionPixels(596.16, 135.20);
-  triangle3.setSize(200);
-  triangle3.setColour(140, 80, 26);  // green
+  const triangleTop = createShape("triangle");
+  //triangleTop.setPosition(0.405, 0.2);
+  triangleTop.setPositionPixels(596.16, 135.20);
+  triangleTop.setSize(200);
+  triangleTop.setColour(140, 80, 26);  // green
 
+  //-------------Interactive Shapes----------------
 // song: gold originally
-  shape2 = createShape("shape2");
-  //shape2.setPosition(0.359, 0.485);
-  shape2.setPositionPixels(528.45, 327.86);
-  shape2.setColour(45, 100, 50);  // gold
-  shape2.setSize(100)
+  goldOrn = createShape("goldOrn");
+  //goldOrn.setPosition(0.359, 0.485);
+  goldOrn.setPositionPixels(528.45, 327.86);
+  goldOrn.setColour(45, 100, 50);  // gold
+  goldOrn.setSize(100)
 
 // effect: red originally
-  shape = createShape("shape");
+  redOrn = createShape("redOrn");
   //shape.setPosition(0.57, 0.66);
-  shape.setPositionPixels(790.04, 440.16);
-  shape.setColour(0, 100, 38);  // red
-  shape.setSize(100)
+  redOrn.setPositionPixels(790.04, 440.16);
+  redOrn.setColour(0, 100, 38);  // red
+  redOrn.setSize(100)
 
-//star on top
+//rotating star
   star = createShape("star");
   //star.setPosition(0.436, 0.12);
   star.setPositionPixels(641.79, 81.12);
@@ -249,21 +265,19 @@ function setup() {
   star.setColour(45, 100, 50);
   star.setRotation(0);
 
-
-  shape.element.addEventListener("pointerenter", pointerEnter);
-  shape.element.addEventListener("pointerleave", pointerLeave);
-
-  // Also add pointerdown for whole window
-
+// ---------- Pointer event listeners ----------
+  redOrn.element.addEventListener("pointerenter", pointerEnter);
+  redOrn.element.addEventListener("pointerleave", pointerLeave);
 
   // i only want sound coming from an interaction with an shape
   //window.addEventListener("pointerdown", pointerDown);
   //window.addEventListener("pointerup", pointerUp);
 
-  shape2.element.addEventListener("pointerdown", pointerDown);
+  goldOrn.element.addEventListener("pointerdown", pointerDown);
 
   window.addEventListener("pointermove", pointerMove);
 
+  // Reset pointer tracking when the pointer leaves the document.
   document.addEventListener("pointerout", function(event) { // setup for resetPointerTracking
   if (event.relatedTarget === null) {
     resetPointerTracking();
@@ -272,7 +286,6 @@ function setup() {
 
   window.addEventListener("blur", resetPointerTracking);
 }
-
 
 
 setup(); // Always remember to call setup()!
